@@ -2,8 +2,11 @@
 
 A lightweight Claude skill that keeps a machine-readable project status file so other models or sessions can plan work without re-reading long chat history.
 
+> [!TIP]
 > **Built to be cheap to run, for everyday use.**
+>
 > Each status file is capped at a short frontmatter block plus 200 words, and a small Python script (not the model) validates them and builds one `summary.md`. A planner model reads that single file instead of long chat histories, which keeps token use low.
+>
 > It is a simple everyday helper for keeping several projects in view, not a project-management product. Check the summary before relying on it.
 
 ## Main description
@@ -24,14 +27,27 @@ Writes a short, strict `status.md` (YAML frontmatter + brief body) for each proj
 - Prefer kebab-case project names that match the folder name.
 
 ## Installation
-1. Place this folder at `~/.claude/skills/status-writer/` (or the equivalent skills directory for your Claude setup).
-2. Install the one dependency (Python 3.8+): `pip install -r requirements.txt`.
-3. Create a status folder anywhere (for example `~/status`) and set `STATUS_ROOT` to its absolute path, either in your shell profile or system environment variables, or in Claude Code's `settings.json`:
+1. Clone into your Claude skills folder and install the one dependency (Python 3.8+):
+   ```bash
+   git clone https://github.com/R3app3r/status-writer ~/.claude/skills/status-writer
+   pip install -r ~/.claude/skills/status-writer/requirements.txt
+   ```
+2. Create a status folder anywhere (for example `~/status`) and set `STATUS_ROOT` to its absolute path, either in your shell profile or system environment variables, or in Claude Code's `settings.json`:
    ```json
    { "env": { "STATUS_ROOT": "/absolute/path/to/status" } }
    ```
 
-The skill folder holds the format (`schema.md`) and the aggregator (`scripts/aggregate.py`); `STATUS_ROOT` holds only your data (`projects/` and `summary.md`). Run the aggregator by hand with `python scripts/aggregate.py --root /absolute/path/to/status`. No network access or API keys are used.
+The skill folder holds the format (`schema.md`) and the aggregator (`scripts/aggregate.py`); `STATUS_ROOT` holds only your data (`projects/` and `summary.md`). No network access or API keys are used.
+
+## Quick start
+At the end of a work session in Claude Code, say *"update status"*. The skill writes `projects/<project>/status.md` and refreshes `summary.md`.  
+To rebuild the summary by hand:
+
+```bash
+python ~/.claude/skills/status-writer/scripts/aggregate.py --root /absolute/path/to/status
+```
+
+See [schema.md](schema.md) for the exact file format and an example.
 
 ## Author
 Marton Rozsas · marton.rozsas@gmail.com  
